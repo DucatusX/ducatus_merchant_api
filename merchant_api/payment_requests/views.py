@@ -12,7 +12,6 @@ from merchant_api.payment_requests.serializers import PaymentRequestSerializer
 class PaymentRequest(APIView):
 
     @swagger_auto_schema(
-        # method='post',
         operation_description="post cart id and cart amount to get ducatus address and pay amount",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
@@ -46,18 +45,8 @@ class PaymentRequest(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @swagger_auto_schema(
-        # method='get',
-        operation_description="get cart id and cart amount to get ducatus address and pay amount",
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            required=['cart_id', 'amount', 'api_token'],
-            properties={
-                'address': openapi.Schema(type=openapi.TYPE_STRING),
-                'platform': openapi.Schema(type=openapi.TYPE_STRING)
-            },
-        ),
+        operation_description="get payment status with all payment info",
         responses={200: PaymentRequestSerializer()},
-
     )
     def get(self, request):
         api_token = request.data['api_token']
