@@ -4,13 +4,12 @@ import hashlib
 import binascii
 
 from bip32utils import BIP32Key
-from eth_keys import keys
+# from eth_keys import keys
 from rest_framework import serializers
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from merchant_api.settings import ROOT_KEYS, BITCOIN_URLS, IS_TESTNET_PAYMENTS
 from merchant_api.payment_requests.models import PaymentRequest
-from merchant_api.rates.api import convert_to_duc_single, get_usd_rates
 from merchant_api.bip32_ducatus import DucatusWallet
 
 
@@ -25,10 +24,10 @@ def registration_btc_address(btc_address):
     )
 
 
-class ExchangeRequestSerializer(serializers.ModelSerializer):
+class PaymentRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentRequest
-        fields = ['shop', 'cart_id', 'original_amount', 'receive_amount']
+        fields = ['shop', 'cart_id', 'original_amount', 'receive_amount', 'duc_address', 'state', 'created_at']
 
     def create(self, validated_data):
         print('validated_data:', validated_data, flush=True)
@@ -53,3 +52,8 @@ class ExchangeRequestSerializer(serializers.ModelSerializer):
                 return super().is_valid(raise_exception)
         else:
             return super().is_valid(raise_exception)
+
+
+    def to_representation(self, payment_info):
+        result = super().to_representation(payment_info)
+        return result

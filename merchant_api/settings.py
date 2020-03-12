@@ -27,6 +27,8 @@ DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1']
 
 
+SECRET_KEY = 'sda'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,8 +42,8 @@ INSTALLED_APPS = [
     'drf_yasg',
     'django_extensions',
     'merchant_api.payments',
-    'merchant_api.rates',
-    'merchant_api.transfers',
+    # 'merchant_api.rates',
+    # 'merchant_api.transfers',
     'merchant_api.payment_requests',
 ]
 

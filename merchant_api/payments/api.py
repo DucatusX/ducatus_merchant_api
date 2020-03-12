@@ -4,8 +4,6 @@ from django.contrib.auth.models import User
 
 from merchant_api.payment_requests.models import DucatusAddress, ExchangeRequest
 from merchant_api.payments.models import Payment
-from merchant_api.rates.api import convert_to_duc_single, get_usd_rates
-from merchant_api.transfers.api import transfer_ducatus
 from merchant_api.consts import DECIMALS
 
 
@@ -87,5 +85,5 @@ def parse_payment_message(message):
 
     payment = register_payment(user_id, tx, currency, amount)
     print('starting transfer', flush=True)
-    transfer_ducatus(payment)
+    # transfer_ducatus(payment)
     print('transfer completed', flush=True)
