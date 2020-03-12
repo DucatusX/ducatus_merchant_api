@@ -46,8 +46,12 @@ class PaymentRequest(APIView):
 
     @swagger_auto_schema(
         operation_description="get payment status with all payment info",
-        responses={200: PaymentRequestSerializer()},
+        manual_parameters=[
+            openapi.Parameter('cart_id', openapi.IN_QUERY, description="test manual param", type=openapi.TYPE_STRING),
+            openapi.Parameter('api_token', openapi.IN_QUERY, description="test manual param", type=openapi.TYPE_STRING)],
+        responses = {200: PaymentRequestSerializer()},
     )
+
     def get(self, request):
         api_token = request.data['api_token']
         cart_id = request.data['cart_id']
