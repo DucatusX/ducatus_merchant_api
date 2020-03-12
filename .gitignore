@@ -1,0 +1,8 @@
+/venv/
+/*/migrations/
+/*/*/migrations/
+/__pycache__/
+/*/__pycache__/
+/*/*/__pycache__/
+/merchant_api/settings_local.py
+gunicorn.conf.py
