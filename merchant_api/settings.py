@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'django_extensions',
     'merchant_api.payments',
-    # 'merchant_api.rates',
+    'merchant_api.rates',
     # 'merchant_api.transfers',
     'merchant_api.payment_requests',
 ]
