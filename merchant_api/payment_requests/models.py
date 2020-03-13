@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from merchant_api.consts import MAX_DIGITS
+from decimal import Decimal
 import secrets
 
 
@@ -21,6 +22,6 @@ class PaymentRequest(models.Model):
     cart_id = models.IntegerField(default=0)
     duc_address = models.CharField(max_length=50, null=True, default=None)
     original_amount = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=0)
-    receive_amount = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=0)
-    state = models.CharField(max_length=50, null=True, default='')
+    receive_amount = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=0, default=Decimal('0'))
+    state = models.CharField(max_length=50, null=True, default='WAITING_FOR_PAYMENT')
     created_at = models.DateTimeField(auto_now_add=True)
