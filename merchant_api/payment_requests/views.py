@@ -1,6 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import PermissionDenied, ValidationError
+
+from django.core.exceptions import ObjectDoesNotExist
 
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -15,7 +18,7 @@ class PaymentRequestHandler(APIView):
         operation_description="post cart id and cart amount to get ducatus address and pay amount",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
-            required=['cart_id', 'amount', 'api_token'],
+            required=['cart_id', 'original_amount', 'api_token'],
             properties={
                 'cart_id': openapi.Schema(type=openapi.TYPE_INTEGER),
                 'original_amount': openapi.Schema(type=openapi.TYPE_STRING),
@@ -29,19 +32,20 @@ class PaymentRequestHandler(APIView):
         request_data = request.data
         token = request_data.get('api_token')
 
-        shop = MerchantShop.objects.get(api_token=token)
+        shop = MerchantShop.objects.filter(api_token=token).first()
+        if shop:
+            request_data['shop'] = shop.id
+            request_data.pop('api_token')
 
-        request_data['shop'] = shop.id
-        request_data.pop('api_token')
+            print('data:', request_data, flush=True)
+            serializer = PaymentRequestSerializer(data=request_data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
 
-        print('data:', request_data, flush=True)
-        serializer = PaymentRequestSerializer(data=request_data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+            print('res:', serializer.data)
 
-        print('res:', serializer.data)
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        raise PermissionDenied
 
     @swagger_auto_schema(
         operation_description="get payment status with all payment info",
@@ -54,7 +58,11 @@ class PaymentRequestHandler(APIView):
     def get(self, request):
         api_token = request.query_params['api_token']
         cart_id = int(request.query_params['cart_id'])
-        shop = MerchantShop.objects.get(api_token=api_token)
-        payment_info = PaymentRequest.objects.filter(cart_id=cart_id, shop=shop).last()
-
-        return Response(PaymentRequestSerializer().to_representation(payment_info))
+        shop = MerchantShop.objects.filter(api_token=api_token).first()
+        if shop:
+            try:
+                payment_info = PaymentRequest.objects.get(cart_id=cart_id, shop=shop)
+                return Response(PaymentRequestSerializer().to_representation(payment_info))
+            except ObjectDoesNotExist:
+                raise ValidationError('cart with id={id} does not exist'.format(id=cart_id))
+        raise PermissionDenied

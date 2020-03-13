@@ -17,7 +17,7 @@ class CurrencyExchangeHandler(APIView):
             openapi.Parameter('api_token', openapi.IN_QUERY, description="test manual param", type=openapi.TYPE_STRING),
             openapi.Parameter('currencies', openapi.IN_QUERY, description="test manual param", type=openapi.TYPE_ARRAY,
                               items=openapi.Items(type=openapi.TYPE_STRING))],
-        # responses={200: PaymentRequestSerializer()},
+        responses={200: """example:\n{'USD': 0.05, 'EUR': 0.06}"""},
     )
     def get(self, request):
         is_allowed = MerchantShop.objects.filter(api_token=request.query_params['api_token'])
