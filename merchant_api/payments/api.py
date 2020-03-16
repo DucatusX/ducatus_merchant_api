@@ -8,7 +8,7 @@ def register_payment(tx, address_from, address_to, amount):
     payment = Payment(
         payment_request=payment_request,
         tx_hash=tx,
-        curreuser_address=address_from,
+        user_address=address_from,
         amount=amount
     )
     print(
@@ -23,7 +23,7 @@ def register_payment(tx, address_from, address_to, amount):
 
     payment.save()
     payment_request.received_amount += payment.amount
-    if payment_request.received_amount == payment_request.original_amount:
+    if payment_request.received_amount >= payment_request.original_amount:
         payment_request.state = 'PAID'
     payment_request.save()
 

@@ -27,7 +27,8 @@ def registration_btc_address(btc_address):
 class PaymentRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentRequest
-        fields = ['shop', 'cart_id', 'original_amount', 'received_amount', 'duc_address', 'state', 'created_at']
+        fields = ['shop', 'cart_id', 'original_amount', 'received_amount', 'duc_address', 'state', 'created_at',
+                  'is_transferred']
 
     def create(self, validated_data):
         print('validated_data:', validated_data, flush=True)
@@ -36,6 +37,9 @@ class PaymentRequestSerializer(serializers.ModelSerializer):
 
         shop_root_key = DucatusWallet.deserialize(shop.root_keys.key_public)
         duc_address = shop_root_key.get_child(cart_id, is_prime=False).to_address()
+
+        # print(shop_root_key.get_child(cart_id, is_prime=False).get_private_key_hex())
+        # print(shop_root_key.get_child(cart_id, is_prime=False).__dict__)
 
         validated_data['duc_address'] = duc_address
 
@@ -52,7 +56,6 @@ class PaymentRequestSerializer(serializers.ModelSerializer):
                 return super().is_valid(raise_exception)
         else:
             return super().is_valid(raise_exception)
-
 
     def to_representation(self, payment_info):
         result = super().to_representation(payment_info)

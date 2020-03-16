@@ -43,4 +43,5 @@ urlpatterns = [
     url(r'^api/v1/redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     url(r'^api/v1/rates/', include('merchant_api.rates.urls')),
     url(r'^api/v1/payment_request/', include('merchant_api.payment_requests.urls')),
+    url(r'^api/v1/transfer_request/', include('merchant_api.payments.urls')),
 ]
