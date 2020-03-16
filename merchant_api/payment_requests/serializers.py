@@ -38,6 +38,14 @@ class PaymentRequestSerializer(serializers.ModelSerializer):
         shop_root_key = DucatusWallet.deserialize(shop.root_keys.key_public)
         duc_address = shop_root_key.get_child(cart_id, is_prime=False).to_address()
 
+        # shop_root_key = DucatusWallet.deserialize(shop.root_keys.key_private)
+        # print(shop_root_key, flush=True)
+        # duc_private = shop_root_key.get_child(cart_id, is_prime=False).get_private_key_hex()
+        # print(duc_private, flush=True)
+
+        # print(shop_root_key.get_child(cart_id, is_prime=False, as_private=False), flush=True)
+        # print(shop_root_key.get_child(cart_id, is_prime=False, as_private=False).get_private_key_hex(), flush=True)
+
         # print(shop_root_key.get_child(cart_id, is_prime=False).get_private_key_hex())
         # print(shop_root_key.get_child(cart_id, is_prime=False).__dict__)
 

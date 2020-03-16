@@ -1,4 +1,4 @@
-from merchant_api.payment_requests.models import PaymentRequest
+from merchant_api.payment_requests.models import PaymentRequest, MerchantShop
 from merchant_api.payments.models import Payment
 
 
@@ -49,4 +49,10 @@ def parse_payment_message(message):
 
 
 def confirm_transfer(message):
-    pass
+    address_from = message.get('address_from')
+    address_to = message.get('address_to')
+    shop = MerchantShop.objects.get(duc_address=address_to)
+    payment = PaymentRequest.objects.get(shop=shop, duc_address=address_from)
+    payment.is_transferred = True
+    payment.save()
+    print('transfer ok', flush=True)

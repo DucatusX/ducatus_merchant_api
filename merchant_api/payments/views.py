@@ -40,8 +40,8 @@ class PaymentTransferHandler(APIView):
 
 def transfer(payment, shop, private_key):
     # TRANSFERRING
-    payment.is_transferred = True
-    payment.save()
+    # payment.is_transferred = True
+    # payment.save()
     print('TRANSFER', payment, shop, private_key)
 
 
