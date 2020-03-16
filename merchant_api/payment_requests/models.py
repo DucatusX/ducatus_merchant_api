@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
 from merchant_api.consts import MAX_DIGITS
 from decimal import Decimal
 import secrets

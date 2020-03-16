@@ -27,7 +27,7 @@ def registration_btc_address(btc_address):
 class PaymentRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentRequest
-        fields = ['shop', 'cart_id', 'original_amount', 'receive_amount', 'duc_address', 'state', 'created_at']
+        fields = ['shop', 'cart_id', 'original_amount', 'received_amount', 'duc_address', 'state', 'created_at']
 
     def create(self, validated_data):
         print('validated_data:', validated_data, flush=True)
@@ -56,4 +56,5 @@ class PaymentRequestSerializer(serializers.ModelSerializer):
 
     def to_representation(self, payment_info):
         result = super().to_representation(payment_info)
+        result['remained_amount'] = payment_info.original_amount - payment_info.received_amount
         return result
