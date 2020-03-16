@@ -25,17 +25,25 @@ class PaymentTransferHandler(APIView):
     )
     def post(self, request):
         token = request.data.get('api_token')
+        print(token, flush=True)
         shop = MerchantShop.objects.filter(api_token=token).first()
         if shop:
-            payments = PaymentRequest.objects.filter(shop=shop)
+            payments = PaymentRequest.objects.filter(shop=shop, state='PAID', is_transferred=False)
             for payment in payments:
                 private_key = get_private_key()
-                transfer(payment.duc_address, shop.duc_address, payment.received_amount, private_key)
+                transfer(payment, shop, private_key)
+
+            return Response({'status': 200})
 
         raise PermissionDenied
 
-def transfer(*args):
-    print('TRANSFER', args)
+
+def transfer(payment, shop, private_key):
+    # TRANSFERRING
+    payment.is_transferred = True
+    payment.save()
+    print('TRANSFER', payment, shop, private_key)
+
 
 def get_private_key(*args):
     return 'private'

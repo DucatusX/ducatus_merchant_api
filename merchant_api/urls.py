@@ -24,15 +24,15 @@ from drf_yasg import openapi
 from merchant_api.views import FeedbackForm
 
 schema_view = get_schema_view(
-   openapi.Info(
-      title="Ducatus Merchant API",
-      default_version='v1',
-      description="API for merchant integration",
-      contact=openapi.Contact(email="ephdtrg@mintyclouds.in"),
-      license=openapi.License(name="MIT License"),
-   ),
-   public=True,
-   permission_classes=(permissions.AllowAny,),
+    openapi.Info(
+        title="Ducatus Merchant API",
+        default_version='v1',
+        description="API for merchant integration",
+        contact=openapi.Contact(email="ephdtrg@mintyclouds.in"),
+        license=openapi.License(name="MIT License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
 )
 
 urlpatterns = [

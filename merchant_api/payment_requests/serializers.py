@@ -59,5 +59,6 @@ class PaymentRequestSerializer(serializers.ModelSerializer):
 
     def to_representation(self, payment_info):
         result = super().to_representation(payment_info)
-        result['remained_amount'] = payment_info.original_amount - payment_info.received_amount
+        amount_diff = payment_info.original_amount - payment_info.received_amount
+        result['remained_amount'] = amount_diff if amount_diff >= 0 else 0
         return result

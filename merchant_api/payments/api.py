@@ -2,7 +2,6 @@ from merchant_api.payment_requests.models import PaymentRequest
 from merchant_api.payments.models import Payment
 
 
-
 def register_payment(tx, address_from, address_to, amount):
     payment_request = PaymentRequest.objects.get(duc_address=address_to)
     payment = Payment(
@@ -47,3 +46,7 @@ def parse_payment_message(message):
     print('PAYMENT:', tx, address_from, address_to, amount, flush=True)
 
     register_payment(tx, address_from, address_to, amount)
+
+
+def confirm_transfer(message):
+    pass

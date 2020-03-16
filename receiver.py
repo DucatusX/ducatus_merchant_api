@@ -13,7 +13,7 @@ django.setup()
 
 from merchant_api.settings import NETWORK_SETTINGS
 from merchant_api.payments.api import parse_payment_message
-# from merchant_api.transfers.api import confirm_transfer
+from merchant_api.payments.api import confirm_transfer
 
 
 class Receiver(threading.Thread):
@@ -56,9 +56,9 @@ class Receiver(threading.Thread):
         print('PAYMENT MESSAGE RECEIVED', flush=True)
         parse_payment_message(message)
 
-    # def transferred(self, message):
-    #     print('TRANSFER CONFIRMATION RECEIVED', flush=True)
-    #     confirm_transfer(message)
+    def transferred(self, message):
+        print('TRANSFER CONFIRMATION RECEIVED', flush=True)
+        confirm_transfer(message)
 
     def callback(self, ch, method, properties, body):
         print('received', body, properties, method, flush=True)
