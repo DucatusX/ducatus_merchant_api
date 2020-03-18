@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'merchant_api.payments',
     'merchant_api.rates',
-    # 'merchant_api.transfers',
+    'merchant_api.wallet_generator',
     'merchant_api.payment_requests',
 ]
 

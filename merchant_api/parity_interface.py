@@ -52,6 +52,8 @@ class ParityInterface:
                 )
             except requests.exceptions.ConnectionError as e:
                 raise ParConnectExc()
+            print(temp)
+            print(temp.content)
             result = json.loads(temp.content.decode())
             if result.get('error'):
                 raise ParErrorExc(result['error']['message'])

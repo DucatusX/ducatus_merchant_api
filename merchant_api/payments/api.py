@@ -1,6 +1,7 @@
 from merchant_api.payment_requests.models import PaymentRequest, MerchantShop
 from merchant_api.payments.models import Payment
-from parity_interface import ParityInterface
+from merchant_api.parity_interface import ParityInterface
+from merchant_api.bip32_ducatus import DucatusWallet
 
 
 def register_payment(tx, address_from, address_to, amount):
@@ -68,9 +69,10 @@ def transfer(payment, shop):
     address_to = shop.duc_address
     address_from = payment.duc_address
 
-    private_key = get_private_key()
+    private_key = get_private_key(shop.root_keys.key_private, shop.cart_id)
 
-    tx = parity.transfer(address_from, private_key, address_to, amount)
+    # tx = parity.transfer(address_from, private_key, address_to, amount)
+    tx = 'tx'
 
     payment.transfer_state = 'WAITING_FOR_CONFIRMATION'
     payment.transfer_tx = tx
@@ -79,6 +81,10 @@ def transfer(payment, shop):
     print('TRANSFER', payment, shop)
 
 
-def get_private_key(*args):
-    return 'private'
-
+def get_private_key(root_key, cart_id):
+    duc_root_key = DucatusWallet.deserialize(root_key)
+    child = duc_root_key.get_child(cart_id)
+    private = child.private_key.get_key()
+    print('first private', private)
+    print('second private', child.get_private_key_hex())
+    return private
