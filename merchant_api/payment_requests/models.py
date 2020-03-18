@@ -25,7 +25,8 @@ class PaymentRequest(models.Model):
     remained_amount = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=0, default=Decimal('0'))
     state = models.CharField(max_length=50, null=True, default='WAITING_FOR_PAYMENT')
     created_at = models.DateTimeField(auto_now_add=True)
-    is_transferred = models.BooleanField(default=False)
+    transfer_state = models.CharField(max_length=50, default='NOT_EXECUTED')
+    transfer_tx = models.CharField(max_length=100, null=True, default='')
 
     class Meta:
         unique_together = ('shop', 'cart_id',)

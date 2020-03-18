@@ -1,5 +1,6 @@
 from merchant_api.payment_requests.models import PaymentRequest, MerchantShop
 from merchant_api.payments.models import Payment
+from parity_interface import ParityInterface
 
 
 def register_payment(tx, address_from, address_to, amount):
@@ -58,3 +59,26 @@ def confirm_transfer(message):
     payment.is_transferred = True
     payment.save()
     print('transfer ok', flush=True)
+
+
+def transfer(payment, shop):
+    parity = ParityInterface()
+
+    amount = payment.received_amount
+    address_to = shop.duc_address
+    address_from = payment.duc_address
+
+    private_key = get_private_key()
+
+    tx = parity.transfer(address_from, private_key, address_to, amount)
+
+    payment.transfer_state = 'WAITING_FOR_CONFIRMATION'
+    payment.transfer_tx = tx
+    payment.save()
+
+    print('TRANSFER', payment, shop)
+
+
+def get_private_key(*args):
+    return 'private'
+

@@ -7,6 +7,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from merchant_api.payment_requests.models import PaymentRequest, MerchantShop
 from merchant_api.payment_requests.serializers import PaymentRequestSerializer
+from merchant_api.payments.api import transfer
 
 
 class PaymentTransferHandler(APIView):
@@ -28,22 +29,10 @@ class PaymentTransferHandler(APIView):
         print(token, flush=True)
         shop = MerchantShop.objects.filter(api_token=token).first()
         if shop:
-            payments = PaymentRequest.objects.filter(shop=shop, state='PAID', is_transferred=False)
+            payments = PaymentRequest.objects.filter(shop=shop, state='PAID', transfer_state='NOT_EXECUTED')
             for payment in payments:
-                private_key = get_private_key()
-                transfer(payment, shop, private_key)
+                transfer(payment, shop)
 
             return Response({'status': 200})
 
         raise PermissionDenied
-
-
-def transfer(payment, shop, private_key):
-    # TRANSFERRING
-    # payment.is_transferred = True
-    # payment.save()
-    print('TRANSFER', payment, shop, private_key)
-
-
-def get_private_key(*args):
-    return 'private'
