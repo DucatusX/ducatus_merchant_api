@@ -28,7 +28,7 @@ class PaymentRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentRequest
         fields = ['shop', 'cart_id', 'original_amount', 'received_amount', 'duc_address', 'state', 'created_at',
-                  'is_transferred']
+                  'is_transferred', 'remained_amount']
 
     def create(self, validated_data):
         print('validated_data:', validated_data, flush=True)
@@ -50,6 +50,7 @@ class PaymentRequestSerializer(serializers.ModelSerializer):
         # print(shop_root_key.get_child(cart_id, is_prime=False).__dict__)
 
         validated_data['duc_address'] = duc_address
+        validated_data['remained_amount'] = validated_data['original_amount']
 
         return super().create(validated_data)
 
@@ -67,6 +68,6 @@ class PaymentRequestSerializer(serializers.ModelSerializer):
 
     def to_representation(self, payment_info):
         result = super().to_representation(payment_info)
-        amount_diff = payment_info.original_amount - payment_info.received_amount
-        result['remained_amount'] = amount_diff if amount_diff >= 0 else 0
+        # amount_diff = payment_info.original_amount - payment_info.received_amount
+        # result['remained_amount'] = amount_diff if amount_diff >= 0 else 0
         return result

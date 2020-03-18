@@ -22,7 +22,9 @@ def register_payment(tx, address_from, address_to, amount):
 
     payment.save()
     payment_request.received_amount += payment.amount
-    if payment_request.received_amount >= payment_request.original_amount:
+    amount_diff = payment_request.original_amount - payment_request.received_amount
+    payment_request.remained_amount = amount_diff if amount_diff >= 0 else 0
+    if payment_request.remained_amount == 0:
         payment_request.state = 'PAID'
     payment_request.save()
 

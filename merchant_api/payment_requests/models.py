@@ -22,6 +22,7 @@ class PaymentRequest(models.Model):
     duc_address = models.CharField(max_length=50, null=True, default=None)
     original_amount = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=0)
     received_amount = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=0, default=Decimal('0'))
+    remained_amount = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=0, default=Decimal('0'))
     state = models.CharField(max_length=50, null=True, default='WAITING_FOR_PAYMENT')
     created_at = models.DateTimeField(auto_now_add=True)
     is_transferred = models.BooleanField(default=False)
