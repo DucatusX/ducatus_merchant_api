@@ -57,19 +57,19 @@ def confirm_transfer(message):
     address_to = message.get('address_to')
     shop = MerchantShop.objects.get(duc_address=address_to)
     payment = PaymentRequest.objects.get(shop=shop, duc_address=address_from)
-    payment.is_transferred = True
+    payment.transfer_state = 'DONE'
     payment.save()
     print('transfer ok', flush=True)
 
 
 def transfer(payment, shop):
-    parity = ParityInterface()
+    # parity = ParityInterface()
 
     amount = payment.received_amount
     address_to = shop.duc_address
     address_from = payment.duc_address
 
-    private_key = get_private_key(shop.root_keys.key_private, shop.cart_id)
+    private_key = get_private_key(shop.root_keys.key_private, payment.cart_id)
 
     # tx = parity.transfer(address_from, private_key, address_to, amount)
     tx = 'tx'

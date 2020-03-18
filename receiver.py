@@ -79,9 +79,7 @@ class Receiver(threading.Thread):
 networks = NETWORK_SETTINGS.keys()
 
 
-for network in networks:
-    rec = Receiver(network)
-    rec.start()
-
-
-
+if __name__ == '__main__':
+    for network in networks:
+        rec = Receiver(network)
+        rec.start()

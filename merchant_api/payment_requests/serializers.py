@@ -11,7 +11,7 @@ class PaymentRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentRequest
         fields = ['shop', 'cart_id', 'original_amount', 'received_amount', 'duc_address', 'state', 'created_at',
-                  'is_transferred', 'remained_amount']
+                  'transfer_state', 'remained_amount', 'transfer_tx']
 
     def create(self, validated_data):
         print('validated_data:', validated_data, flush=True)
