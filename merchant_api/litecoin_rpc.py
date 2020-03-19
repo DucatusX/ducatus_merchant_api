@@ -32,14 +32,32 @@ class DucatuscoreInterface:
         else:
             raise Exception('Ducatus node not connected')
 
-    def transfer(self, address, amount):
+    def transfer(self, prev_tx, address, amount, private_key):
         try:
-            value = amount / DECIMALS['DUC']
-            print('try sending {value} DUC to {addr}'.format(value=value, addr=address))
-            self.rpc.walletpassphrase(self.settings['wallet_password'], 30)
-            res = self.rpc.sendtoaddress(address, value)
-            print(res)
-            return res
+            # value = amount / DECIMALS['DUC']
+            # print('try sending {value} DUC to {addr}'.format(value=value, addr=address))
+            # self.rpc.walletpassphrase(self.settings['wallet_password'], 30)
+            # res = self.rpc.sendtoaddress(address, value)
+            # print(res)
+            # return res
+
+            # prev_tx = listunspent()
+
+            input_params = [{"txid": prev_tx, "vout": 0}]
+
+            output_params = [{address: amount}]
+
+            tx = self.rpc.createrawtransaction(input_params, output_params)
+
+            signed = self.rpc.signrawtransactionwithkey(tx, [private_key])
+
+            tx_hash = self.rpc.sendrawtransaction(signed['hex'])
+
+            return tx_hash
+
+
+
+
         except JSONRPCException as e:
             print('DUCATUS TRANSFER ERROR: transfer for {amount} DUC for {addr} failed'
                   .format(amount=amount, addr=address), flush=True
