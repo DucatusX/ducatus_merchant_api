@@ -1,6 +1,6 @@
 from merchant_api.payment_requests.models import PaymentRequest, MerchantShop
 from merchant_api.payments.models import Payment
-from merchant_api.parity_interface import ParityInterface
+from merchant_api.litecoin_rpc import DucatuscoreInterface
 from merchant_api.bip32_ducatus import DucatusWallet
 
 
@@ -63,7 +63,7 @@ def confirm_transfer(message):
 
 
 def transfer(payment, shop):
-    # parity = ParityInterface()
+    parity = DucatuscoreInterface()
 
     amount = payment.received_amount
     address_to = shop.duc_address
@@ -71,7 +71,7 @@ def transfer(payment, shop):
 
     private_key = get_private_key(shop.root_keys.key_private, payment.cart_id)
 
-    # tx = parity.transfer(address_from, private_key, address_to, amount)
+    tx = parity.transfer(address_from, private_key, address_to, amount)
     tx = 'tx'
 
     payment.transfer_state = 'WAITING_FOR_CONFIRMATION'

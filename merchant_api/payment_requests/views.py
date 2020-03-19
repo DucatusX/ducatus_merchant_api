@@ -15,7 +15,7 @@ from merchant_api.payment_requests.serializers import PaymentRequestSerializer
 class PaymentRequestHandler(APIView):
 
     @swagger_auto_schema(
-        operation_description="post cart id and cart amount to get ducatus address and pay amount",
+        operation_description="create unique ducatus address for user payment",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             required=['cart_id', 'original_amount', 'api_token'],
@@ -48,7 +48,7 @@ class PaymentRequestHandler(APIView):
         raise PermissionDenied
 
     @swagger_auto_schema(
-        operation_description="get payment status with all payment info",
+        operation_description="get all payment information using your api_token and cart_id",
         manual_parameters=[
             openapi.Parameter('cart_id', openapi.IN_QUERY, description="test manual param", type=openapi.TYPE_INTEGER),
             openapi.Parameter('api_token', openapi.IN_QUERY, description="test manual param", type=openapi.TYPE_STRING)],

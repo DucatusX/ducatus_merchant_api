@@ -120,7 +120,7 @@ def create_wallet(seed=None, children=1):
     my_wallet = DucatusWallet.from_master_secret(
         network='ducatus', seed=seed)
 
-    print(my_wallet)
+    print(my_wallet.__dict__)
 
     # account level
     wallet["private_key"] = my_wallet.private_key.get_key().decode()
@@ -142,5 +142,7 @@ def create_wallet(seed=None, children=1):
             "path": "m/" + str(child),
             "bip32_path": net.BIP32_PATH + str(child_wallet.child_number),
         })
+
+    print(wallet)
 
     return wallet
