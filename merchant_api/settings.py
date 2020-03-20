@@ -80,17 +80,6 @@ WSGI_APPLICATION = 'merchant_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'merchant_api',
-        'USER': 'merchant_api',
-        'PASSWORD': 'merchant_api',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
