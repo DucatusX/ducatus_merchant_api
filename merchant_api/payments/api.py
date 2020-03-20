@@ -49,7 +49,7 @@ def parse_payment_message(message):
 
     tx = message.get('transactionHash')
     # address_from = message.get('address_from')
-    address_to = message.get('address_to')
+    address_to = message.get('toAddress')
     amount = message.get('amount')
     print('PAYMENT:', tx, address_from, address_to, amount, flush=True)
 
@@ -58,7 +58,7 @@ def parse_payment_message(message):
 
 def confirm_transfer(message):
     address_from = message.get('address_from')
-    address_to = message.get('address_to')
+    address_to = message.get('toAddress')
     shop = MerchantShop.objects.get(duc_address=address_to)
     payment = PaymentRequest.objects.get(shop=shop, duc_address=address_from)
     payment.transfer_state = 'DONE'
