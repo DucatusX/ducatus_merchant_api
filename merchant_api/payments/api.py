@@ -82,13 +82,16 @@ def transfer(payment, shop):
     for i in range(3):
         tx = rpc.transfer(input_hashes, address_to, amount, private_key)
         if tx:
+            payment.transfer_state = 'WAITING_FOR_CONFIRMATION'
+            payment.transfer_tx = tx
+            payment.save()
             break
 
     # tx = 'tx'
 
-    payment.transfer_state = 'WAITING_FOR_CONFIRMATION'
-    payment.transfer_tx = tx
-    payment.save()
+    # payment.transfer_state = 'WAITING_FOR_CONFIRMATION'
+    # payment.transfer_tx = tx
+    # payment.save()
 
     print('TRANSFER', payment, shop)
 
