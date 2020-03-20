@@ -26,8 +26,8 @@ class Receiver(threading.Thread):
         connection = pika.BlockingConnection(pika.ConnectionParameters(
             'localhost',
             5672,
-            'ducatus_merchant_api',
-            pika.PlainCredentials('ducatus_merchant_api', 'ducatus_merchant_api'),
+            'merchant_api',
+            pika.PlainCredentials('payment_ducatus', 'payment_ducatus'),
         ))
 
         channel = connection.channel()
