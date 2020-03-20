@@ -49,7 +49,7 @@ class DucatuscoreInterface:
                     'vout': 0
                 })
 
-            transaction_fee = self.rpc.getinfo()['paytxfee']
+            transaction_fee = self.rpc.getinfo()['relayfee']
 
             output_params = {address: (amount - 100 * transaction_fee)}
 
