@@ -43,8 +43,12 @@ def parse_payment_message(message):
     #     "type": "payment",
     #     "success": true
     # }
+
+    # temporary
+    address_from = 'user_address'
+
     tx = message.get('transactionHash')
-    address_from = message.get('address_from')
+    # address_from = message.get('address_from')
     address_to = message.get('address_to')
     amount = message.get('amount')
     print('PAYMENT:', tx, address_from, address_to, amount, flush=True)
