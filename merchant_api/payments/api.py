@@ -63,7 +63,7 @@ def confirm_transfer(message):
 
 
 def transfer(payment, shop):
-    parity = DucatuscoreInterface()
+    rpc = DucatuscoreInterface()
 
     amount = payment.received_amount
     address_to = shop.duc_address
@@ -76,7 +76,7 @@ def transfer(payment, shop):
     # crutch(
     tx = ''
     for i in range(3):
-        tx = parity.transfer(input_hashes, address_to, amount, private_key)
+        tx = rpc.transfer(input_hashes, address_to, amount, private_key)
         if tx:
             break
 
