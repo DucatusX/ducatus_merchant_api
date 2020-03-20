@@ -7,7 +7,7 @@ import sys
 from types import FunctionType
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ducatus_exchange.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'merchant_api.settings')
 import django
 django.setup()
 
