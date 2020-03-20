@@ -51,7 +51,7 @@ class DucatuscoreInterface:
 
             transaction_fee = self.rpc.getinfo()['paytxfee']
 
-            output_params = {address: amount / DECIMALS['DUC'] - transaction_fee}
+            output_params = {address: amount - transaction_fee}
 
             tx = self.rpc.createrawtransaction(input_params, output_params)
             print('raw tx', tx, flush=True)
