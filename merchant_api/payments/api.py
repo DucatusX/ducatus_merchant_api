@@ -73,7 +73,13 @@ def transfer(payment, shop):
 
     input_hashes = list(Payment.objects.filter(payment_request=payment).values_list('tx_hash', flat=True))
 
-    tx = parity.transfer(input_hashes, address_to, amount, private_key)
+    # crutch(
+    tx = ''
+    for i in range(3):
+        tx = parity.transfer(input_hashes, address_to, amount, private_key)
+        if tx:
+            break
+
     # tx = 'tx'
 
     payment.transfer_state = 'WAITING_FOR_CONFIRMATION'
