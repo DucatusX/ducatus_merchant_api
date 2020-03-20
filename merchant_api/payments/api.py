@@ -96,6 +96,6 @@ def transfer(payment, shop):
 def get_private_key(root_key, cart_id):
     duc_root_key = DucatusWallet.deserialize(root_key)
     child = duc_root_key.get_child(cart_id)
-    private = child.export_to_wif()
+    private = child.export_to_wif().decode()
     print('child private', private)
     return private
