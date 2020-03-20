@@ -6,31 +6,34 @@ from merchant_api.bip32_ducatus import DucatusWallet
 
 def register_payment(tx, address_from, address_to, amount):
     payment_request = PaymentRequest.objects.get(duc_address=address_to)
-    payment = Payment(
-        payment_request=payment_request,
-        tx_hash=tx,
-        user_address=address_from,
-        amount=amount
-    )
-    print(
-        'PAYMENT: {amount} DUC from {address_from} to {address_to} with TXID: {txid}'.format(
-            amount=amount,
-            address_from=address_from,
-            address_to=address_to,
-            txid=tx
-        ),
-        flush=True
-    )
+    if payment_request.state != 'PAID':
+        payment = Payment(
+            payment_request=payment_request,
+            tx_hash=tx,
+            user_address=address_from,
+            amount=amount
+        )
+        print(
+            'PAYMENT: {amount} DUC from {address_from} to {address_to} with TXID: {txid}'.format(
+                amount=amount,
+                address_from=address_from,
+                address_to=address_to,
+                txid=tx
+            ),
+            flush=True
+        )
 
-    payment.save()
-    payment_request.received_amount += payment.amount
-    amount_diff = payment_request.original_amount - payment_request.received_amount
-    payment_request.remained_amount = amount_diff if amount_diff >= 0 else 0
-    if payment_request.remained_amount == 0:
-        payment_request.state = 'PAID'
-    payment_request.save()
+        payment.save()
+        payment_request.received_amount += payment.amount
+        amount_diff = payment_request.original_amount - payment_request.received_amount
+        payment_request.remained_amount = amount_diff if amount_diff >= 0 else 0
+        if payment_request.remained_amount == 0:
+            payment_request.state = 'PAID'
+        payment_request.save()
 
-    print('payment ok', flush=True)
+        print('payment ok', flush=True)
+    else:
+        print('already paid', flush=True)
 
 
 def parse_payment_message(message):
