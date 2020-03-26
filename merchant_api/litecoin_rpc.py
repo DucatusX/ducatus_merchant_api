@@ -1,7 +1,32 @@
 from bitcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
+from http.client import RemoteDisconnected
+from decimal import Decimal
 
 from merchant_api.settings import NETWORK_SETTINGS
 from merchant_api.consts import DECIMALS
+
+
+def retry_on_http_disconnection(req):
+    def wrapper(*args, **kwargs):
+        for attempt in range(10):
+            print('attempt', attempt, flush=True)
+            try:
+                return req(*args, **kwargs)
+            except RemoteDisconnected as e:
+                print(e, flush=True)
+                rpc_response = False
+            if not isinstance(rpc_response, bool):
+                print(rpc_response, flush=True)
+                break
+        else:
+            raise Exception(
+                'cannot get unspent with 10 attempts')
+
+    return wrapper
+
+
+class DucatuscoreInterfaceException(Exception):
+    pass
 
 
 class DucatuscoreInterface:
@@ -31,27 +56,66 @@ class DucatuscoreInterface:
         else:
             raise Exception('Ducatus node not connected')
 
-    def transfer(self, input_hashes, address, amount, private_key):
+    @retry_on_http_disconnection
+    def get_unspent(self, tx_hash, count):
+        return self.rpc.gettxout(tx_hash, count)
+
+    @retry_on_http_disconnection
+    def get_unspent_input(self, tx_hash, payment_address):
+        last_response = {}
+        count = 0
+        while isinstance(last_response, dict):
+            rpc_response = self.get_unspent(tx_hash, count)
+            last_response = rpc_response
+
+            input_addresses = rpc_response['scriptPubKey']['addresses']
+            if payment_address in input_addresses:
+                return rpc_response, count
+
+            count += 1
+
+    @retry_on_http_disconnection
+    def get_fee(self):
+        return self.rpc.getinfo()['relayfee']
+
+    @retry_on_http_disconnection
+    def node_transfer(self, address, amount):
         try:
-            # value = amount / DECIMALS['DUC']
-            # print('try sending {value} DUC to {addr}'.format(value=value, addr=address))
-            # self.rpc.walletpassphrase(self.settings['wallet_password'], 30)
-            # res = self.rpc.sendtoaddress(address, value)
-            # print(res)
-            # return res
+            value = amount / DECIMALS['DUC']
+            print('try sending {value} DUC to {addr}'.format(value=value, addr=address))
+            self.rpc.walletpassphrase(self.settings['wallet_password'], 30)
+            res = self.rpc.sendtoaddress(address, value)
+            print(res)
+            return res
+        except JSONRPCException as e:
+            err = 'DUCATUS TRANSFER ERROR: transfer for {amount} DUC for {addr} failed' \
+                .format(amount=amount, addr=address)
+            print(err, flush=True)
+            print(e, flush=True)
+            raise DucatuscoreInterfaceException(err)
 
-            # prev_tx = listunspent()
-
+    @retry_on_http_disconnection
+    def internal_transfer(self, tx_list, address_from, address_to,  amount, private_key):
+        print('start raw tx build', flush=True)
+        try:
             input_params = []
-            for prev_hash in input_hashes:
+            for payment_hash in tx_list:
+
+                unspent_input, input_vout_count = self.get_unspent_input(payment_hash, address_from)
+                print('unspent input', unspent_input, flush=True)
+
                 input_params.append({
-                    'txid': prev_hash,
-                    'vout': 0
+                    'txid': payment_hash,
+                    'vout': input_vout_count
                 })
 
-            transaction_fee = self.rpc.getinfo()['relayfee']
+            # transaction_fee = self.get_fee()
+            transaction_fee = Decimal(int(amount) / 100)
+            send_amount = (Decimal(amount) - transaction_fee) / DECIMALS['DUC']
 
-            output_params = {address: 1/DECIMALS['DUC']}
+            print('input_params', input_params, flush=True)
+            output_params = {address_to: send_amount}
+            print('output_params', output_params, flush=True)
 
             tx = self.rpc.createrawtransaction(input_params, output_params)
             print('raw tx', tx, flush=True)
@@ -66,6 +130,6 @@ class DucatuscoreInterface:
 
         except JSONRPCException as e:
             print('DUCATUS TRANSFER ERROR: transfer for {amount} DUC for {addr} failed'
-                  .format(amount=amount, addr=address), flush=True
+                  .format(amount=amount, addr=address_to), flush=True
                   )
             print(e, flush=True)

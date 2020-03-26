@@ -4,19 +4,18 @@ from merchant_api.litecoin_rpc import DucatuscoreInterface
 from merchant_api.bip32_ducatus import DucatusWallet
 
 
-def register_payment(tx, address_from, address_to, amount):
+def register_payment(tx, address_to, amount):
     payment_request = PaymentRequest.objects.get(duc_address=address_to)
     if payment_request.state != 'PAID':
         payment = Payment(
             payment_request=payment_request,
             tx_hash=tx,
-            user_address=address_from,
+            user_address=address_to,
             amount=amount
         )
         print(
-            'PAYMENT: {amount} DUC from {address_from} to {address_to} with TXID: {txid}'.format(
+            'PAYMENT: {amount} DUC to {address_to} with TXID: {txid}'.format(
                 amount=amount,
-                address_from=address_from,
                 address_to=address_to,
                 txid=tx
             ),
@@ -37,35 +36,22 @@ def register_payment(tx, address_from, address_to, amount):
 
 
 def parse_payment_message(message):
-    # {
-    #     "status": "COMMITTED",
-    #     "transactionHash": "c0963718ea4bfdf1540cfbbc46357971ac2799f45811505a6a1d8cf8c92b5906",
-    #     "userAddress": "1Bwd6WKNykMtsahTSkPaJvw4m4CKXz4hPM",
-    #     "amount": 600359,
-    #     "currency": "BTC",
-    #     "type": "payment",
-    #     "success": true
-    # }
-
-    # temporary
-    address_from = 'user_address'
-
     tx = message.get('transactionHash')
-    # address_from = message.get('address_from')
     address_to = message.get('toAddress')
     amount = message.get('amount')
-    print('PAYMENT:', tx, address_from, address_to, amount, flush=True)
+    print('PAYMENT:', tx, address_to, amount, flush=True)
 
-    register_payment(tx, address_from, address_to, amount)
+    register_payment(tx, address_to, amount)
 
 
-def confirm_transfer(message):
-    address_from = message.get('address_from')
-    address_to = message.get('toAddress')
-    shop = MerchantShop.objects.get(duc_address=address_to)
-    payment = PaymentRequest.objects.get(shop=shop, duc_address=address_from)
-    payment.transfer_state = 'DONE'
-    payment.save()
+def parse_transfer_messager(message):
+    tx_hash = message.get('txHash')
+    # address_from = message.get('address_from')
+    # address_to = message.get('toAddress')
+    # shop = MerchantShop.objects.get(duc_address=address_to)
+    payment_request = PaymentRequest.objects.get(transfer_tx=tx_hash)
+    payment_request.transfer_state = 'DONE'
+    payment_request.save()
     print('transfer ok', flush=True)
 
 
@@ -74,29 +60,27 @@ def transfer(payment, shop):
 
     amount = payment.received_amount
     address_to = shop.duc_address
-    # address_from = payment.duc_address
+    address_from = payment.duc_address
+
+    print('Starting transfer', address_from, 'to', address_to, 'amount', amount, flush=True)
 
     private_key = get_private_key(shop.root_keys.key_private, payment.cart_id)
 
-    input_hashes = list(Payment.objects.filter(payment_request=payment).values_list('tx_hash', flat=True))
+    prev_tx_list = list(Payment.objects.filter(payment_request=payment).values_list('tx_hash', flat=True))
 
-    # crutch(
-    tx = ''
-    for i in range(3):
-        tx = rpc.transfer(input_hashes, address_to, amount, private_key)
-        if tx:
-            payment.transfer_state = 'WAITING_FOR_CONFIRMATION'
-            payment.transfer_tx = tx
-            payment.save()
-            break
+    try:
+        tx = rpc.internal_transfer(prev_tx_list, address_from, address_to, amount, private_key)
+        payment.transfer_state = 'WAITING_FOR_CONFIRMATION'
+        payment.transfer_tx = tx
+        payment.save()
+    except Exception as e:
+        print('Error in internal transfer from {addr_from} to {addr_to} with amount {amount} DUC'.format(
+            addr_from=address_from,
+            addr_to=address_to,
+            amount=amount
+        ), flush=True)
+        print('error:', e, flush=True)
 
-    # tx = 'tx'
-
-    # payment.transfer_state = 'WAITING_FOR_CONFIRMATION'
-    # payment.transfer_tx = tx
-    # payment.save()
-
-    print('TRANSFER', payment, shop)
 
 
 def get_private_key(root_key, cart_id):
