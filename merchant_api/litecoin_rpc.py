@@ -97,6 +97,7 @@ class DucatuscoreInterface:
     @retry_on_http_disconnection
     def internal_transfer(self, tx_list, address_from, address_to,  amount, private_key):
         print('start raw tx build', flush=True)
+        print('tx_list', tx_list, 'from', address_from, 'to', address_to, 'amount', amount, flush=True )
         try:
             input_params = []
             for payment_hash in tx_list:
