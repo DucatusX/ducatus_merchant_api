@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from merchant_api.payment_requests.models import PaymentRequest
 from merchant_api.bip32_ducatus import DucatusWallet
+from merchant_api.consts import DECIMALS
 
 
 
@@ -22,6 +23,7 @@ class PaymentRequestSerializer(serializers.ModelSerializer):
         duc_address = shop_root_key.get_child(cart_id, is_prime=False).to_address()
 
         validated_data['duc_address'] = duc_address
+        validated_data['original_amount'] *= DECIMALS['DUC']
         validated_data['remained_amount'] = validated_data['original_amount']
 
         return super().create(validated_data)
