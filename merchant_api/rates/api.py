@@ -29,7 +29,7 @@ class CurrencyExchangeHandler(APIView):
             for currency in currencies:
                 try:
                     rate = converter.convert(1, currency, 'USD')
-                    result.update({currency: rate * USD_rate})
+                    result.update({currency: rate / USD_rate})
                 except ValueError as err:
                     raise ValidationError(str(err))
 
