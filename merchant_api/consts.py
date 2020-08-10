@@ -5,7 +5,3 @@ DECIMALS = {
     'BTC': 10 ** 8,
     'DUC': 10 ** 8,
 }
-
-CURRENCY_RATE = {
-    'USD': 0.06
-}

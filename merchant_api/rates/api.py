@@ -1,3 +1,6 @@
+import json
+import requests
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied, ValidationError
@@ -5,8 +8,8 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from currency_converter import CurrencyConverter
-from merchant_api.consts import CURRENCY_RATE
 from merchant_api.payment_requests.models import MerchantShop
+from merchant_api.settings import RATES_API_URL
 
 
 class CurrencyExchangeHandler(APIView):
@@ -39,4 +42,5 @@ class CurrencyExchangeHandler(APIView):
 
 
 def get_usd_rate():
-    return CURRENCY_RATE['USD']
+    usd_rate = json.loads(requests.get(RATES_API_URL.format(fsym='DUC', tsyms='USD')).content).get('USD')
+    return usd_rate
