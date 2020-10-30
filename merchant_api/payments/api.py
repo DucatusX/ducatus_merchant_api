@@ -28,6 +28,8 @@ def register_payment(tx, address_to, amount):
         payment_request.remained_amount = amount_diff if amount_diff >= 0 else 0
         if payment_request.remained_amount == 0:
             payment_request.state = 'PAID'
+        else:
+            payment_request.state = 'PAID_PARTIALLY'
         payment_request.save()
 
         print('payment ok', flush=True)
