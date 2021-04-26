@@ -64,7 +64,7 @@ class DucatuscoreInterface:
     def get_unspent_input(self, tx_hash, payment_address):
         last_response = {}
         count = 0
-        while isinstance(last_response, dict) or count <= 0:
+        while isinstance(last_response, dict) or count <= 1:
             rpc_response = self.get_unspent(tx_hash, count)
             last_response = rpc_response
             try:
