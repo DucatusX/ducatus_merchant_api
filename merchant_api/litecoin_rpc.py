@@ -113,7 +113,7 @@ class DucatuscoreInterface:
                 })
 
             # transaction_fee = self.get_fee()
-            raw_fee = duc_rpc.get_fee()
+            raw_fee = self.rpc.get_fee()
             transaction_fee = raw_fee * DECIMALS['DUC']
             send_amount = (Decimal(amount) - transaction_fee) / DECIMALS['DUC']
 
