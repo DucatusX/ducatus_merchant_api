@@ -7,7 +7,7 @@ on:
       - unlegacify
       - feature*
       - DR-*
-   pull_request:
+  pull_request:
      branches: [ master ]
       
 env:
