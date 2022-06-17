@@ -116,7 +116,6 @@ class DucatuscoreInterface:
                     'vout': input_vout_count
                 })
 
-            # transaction_fee = self.get_fee()
             raw_fee = self.get_fee()
             transaction_fee = raw_fee * DECIMALS['DUC']
             send_amount = (Decimal(amount) - transaction_fee) / DECIMALS['DUC']
