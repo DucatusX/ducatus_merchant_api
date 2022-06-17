@@ -61,6 +61,10 @@ class DucatuscoreInterface:
         return self.rpc.gettxout(tx_hash, count)
 
     @retry_on_http_disconnection
+    def get_fee(self):
+        return self.rpc.getinfo()['relayfee']
+
+    @retry_on_http_disconnection
     def get_unspent_input(self, tx_hash, payment_address):
         last_response = {}
         count = 0
@@ -113,7 +117,7 @@ class DucatuscoreInterface:
                 })
 
             # transaction_fee = self.get_fee()
-            raw_fee = self.rpc.get_fee()
+            raw_fee = self.get_fee()
             transaction_fee = raw_fee * DECIMALS['DUC']
             send_amount = (Decimal(amount) - transaction_fee) / DECIMALS['DUC']
 
