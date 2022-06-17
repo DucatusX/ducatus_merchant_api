@@ -2,9 +2,8 @@ from bitcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
 from http.client import RemoteDisconnected
 from decimal import Decimal
 
-from merchant_api.settings import NETWORK_SETTINGS
+from merchant_api.settings import config
 from merchant_api.consts import DECIMALS
-
 
 def retry_on_http_disconnection(req):
     def wrapper(*args, **kwargs):
@@ -35,17 +34,17 @@ class DucatuscoreInterface:
 
     def __init__(self):
 
-        self.settings = NETWORK_SETTINGS['DUC']
+        self.settings = config.networks.get('DUCATUS_MAINNET')
         self.setup_endpoint()
         self.rpc = AuthServiceProxy(self.endpoint)
         self.check_connection()
 
     def setup_endpoint(self):
         self.endpoint = 'http://{user}:{pwd}@{host}:{port}'.format(
-            user=self.settings['user'],
-            pwd=self.settings['password'],
-            host=self.settings['host'],
-            port=self.settings['port']
+            user=self.settings.user,
+            pwd=self.settings.password,
+            host=self.settings.host,
+            port=self.settings.port
         )
         return
 

@@ -11,18 +11,19 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from merchant_api.config import config
+from merchant_api.logging_settings import LOGGING
+import logging.config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.dirname(os.path.realpath(__file__))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
+logging.config.dictConfig(LOGGING)
 
-# SECURITY WARNING: keep the secret key used in production secret!
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+SECRET_KEY = config.secret_key
+DEBUG = config.debug
+ALLOWED_HOSTS = config.allowed_hosts
 
 # Application definition
 
@@ -75,7 +76,16 @@ WSGI_APPLICATION = 'merchant_api.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'merchant_api'),
+        'USER': os.getenv('POSTGRES_USER', 'merchant_api'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'merchant_api'),
+        'HOST': os.getenv('POSTGRES_HOST', 'db'),
+        'PORT': '5432',
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -113,8 +123,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'merchant_api', 'static/')
-STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_URL = '/django-static/'
 #STATICFILES_DIRS = [
 #    os.path.join(BASE_DIR, 'merchant_api', 'static'),
 #]
@@ -131,8 +141,10 @@ REST_FRAMEWORK = {
 
 SHELL_PLUS = 'ptpython'
 
-try:
-    from merchant_api.settings_local import *
-except ImportError:
-    print('Cannot import local settings', flush=True)
+DEFAULT_FROM_EMAIL = config.mail_settings.default_from_email
 
+EMAIL_HOST = config.mail_settings.email_host
+EMAIL_HOST_USER = config.mail_settings.email_host_user
+EMAIL_HOST_PASSWORD = config.mail_settings.email_host_password
+EMAIL_PORT = config.mail_settings.email_port
+EMAIL_USE_TLS = config.mail_settings.email_use_tls

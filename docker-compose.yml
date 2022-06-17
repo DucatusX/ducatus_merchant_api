@@ -1,0 +1,64 @@
+version: "3.8"
+
+services:
+  db:
+    restart: unless-stopped
+    image: postgres:14.0
+    env_file: ./.env
+    volumes:
+      - ./.docker/postgres-data:/var/lib/postgresql/data
+    networks:
+      ducatus-merchant-network:
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "${POSTGRES_USER}" ]
+      interval: 10s
+  rabbitmq:
+    restart: unless-stopped
+    image: rabbitmq:3.8-management-alpine
+    networks:
+      ducatus-merchant-network:
+    env_file: ./.env
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 10s
+  web:
+    restart: unless-stopped
+    image: "ghcr.io/ducatusx/ducatus_merchant_api:${GITHUB_BUILD_BRANCH?master}"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: ./.env
+    ports:
+      - "${DOCKER_EXPOSE_PORT}:${DJANGO_PORT}"
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./:/code/
+      - ./static/:/code/static/
+    command: /runserver.sh
+    networks:
+      ducatus-merchant-network:
+  scanner:
+    restart: unless-stopped
+    image: "ghcr.io/ducatusx/ducatus_merchant_api:${GITHUB_BUILD_BRANCH?master}"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: ./.env
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./:/code/
+      - ./scanner_blocks/:/code/scanner/blocks/
+    command: ["python", "scanner/networks/networks_scan_entrypoint.py"]
+    networks:
+      ducatus-merchant-network:
+
+networks:
+  ducatus-merchant-network:

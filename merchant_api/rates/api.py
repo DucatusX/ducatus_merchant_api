@@ -9,7 +9,7 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from currency_converter import CurrencyConverter
 from merchant_api.payment_requests.models import MerchantShop
-from merchant_api.settings import RATES_API_URL
+from merchant_api.settings import config
 
 
 class CurrencyExchangeHandler(APIView):
@@ -42,5 +42,5 @@ class CurrencyExchangeHandler(APIView):
 
 
 def get_usd_rate():
-    usd_rate = json.loads(requests.get(RATES_API_URL.format(fsym='DUC', tsyms='USD')).content).get('USD')
+    usd_rate = json.loads(requests.get(config.rates_api_url.format(fsym='DUC', tsyms='USD')).content).get('USD')
     return usd_rate
