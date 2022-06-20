@@ -55,7 +55,6 @@ services:
         condition: service_healthy
     volumes:
       - ./:/code/
-      - ./scanner_blocks/:/code/scanner/blocks/
     command: ["python", "scanner/networks/networks_scan_entrypoint.py"]
     networks:
       ducatus-merchant-network:

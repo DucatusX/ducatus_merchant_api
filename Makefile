@@ -10,8 +10,10 @@ up_from_image:
 	sudo $(compose) up -d
 
 up_web:
-	sudo $(compose) up --build -d web
+	sudo $(compose) up -d web
 
+up_service:
+	sudo $(compose) up -d $(service)
 
 stop:
 	sudo $(compose) stop
@@ -27,7 +29,7 @@ logs:
 
 
 make_all_migrations:
-	sudo $(compose) exec web python manage.py makemigrations contracts rates accounts
+	sudo $(compose) exec web python manage.py makemigrations payments rates wallet_generator payment_requests
 
 migrate_all:
 	sudo $(compose) exec web python manage.py migrate
