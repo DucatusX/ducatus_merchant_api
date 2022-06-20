@@ -60,6 +60,7 @@ requests==2.11.1
 ruamel.yaml==0.16.10
 ruamel.yaml.clib==0.2.0
 sha256==0.3
+shyaml==0.6.2
 six==1.16.0
 SQLAlchemy==1.4.37
 sqlparse==0.3.1
