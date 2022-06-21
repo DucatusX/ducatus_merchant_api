@@ -21,43 +21,32 @@ services:
     healthcheck:
       test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
       interval: 10s
-  web:
+  scanner: &python-service
     restart: unless-stopped
     image: "ghcr.io/ducatusx/ducatus_merchant_api:${GITHUB_BUILD_BRANCH?master}"
     build:
       context: .
       dockerfile: Dockerfile
     env_file: ./.env
-    ports:
-      - "${DOCKER_EXPOSE_PORT}:${DJANGO_PORT}"
     depends_on:
       db:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+    volumes:
+      - ./:/code/
+    command: [ "python", "scanner/networks/networks_scan_entrypoint.py" ]
+    networks:
+      ducatus-merchant-network:
+  web:
+    <<: *python-service
     volumes:
       - ./:/code/
       - ./static/:/code/static/
     command: /runserver.sh
-    networks:
-      ducatus-merchant-network:
-  scanner:
-    restart: unless-stopped
-    image: "ghcr.io/ducatusx/ducatus_merchant_api:${GITHUB_BUILD_BRANCH?master}"
-    build:
-      context: .
-      dockerfile: Dockerfile
-    env_file: ./.env
-    depends_on:
-      db:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    volumes:
-      - ./:/code/
-    command: ["python", "scanner/networks/networks_scan_entrypoint.py"]
-    networks:
-      ducatus-merchant-network:
+  receiver:
+    <<: *python-service
+    command: [ "python", "merchant_api/receiver.py" ]
 
 networks:
   ducatus-merchant-network:

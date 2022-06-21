@@ -14,5 +14,8 @@ EXPOSE 8000
 
 COPY . /code/
 
+RUN mkdir -p /root/.config/ptpython
+COPY ptpython-config.py /root/.config/ptpython/config.py
+
 COPY ./runserver.sh /
 RUN chmod +x /runserver.sh

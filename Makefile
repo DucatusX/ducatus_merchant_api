@@ -15,6 +15,9 @@ up_web:
 up_service:
 	sudo $(compose) up -d $(service)
 
+up_service_build:
+	sudo $(compose) up --build -d $(service)
+
 stop:
 	sudo $(compose) stop
 
@@ -26,6 +29,9 @@ ps:
 
 logs:
 	sudo $(compose) logs --timestamps --tail $(tail) -f $(service)
+
+shell:
+	sudo $(compose) exec web python manage.py shell_plus
 
 
 make_all_migrations:

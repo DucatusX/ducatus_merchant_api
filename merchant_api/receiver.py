@@ -6,6 +6,9 @@ import json
 import sys
 from types import FunctionType
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+print(BASE_DIR)
+sys.path.append(BASE_DIR)
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'merchant_api.settings')
 import django
