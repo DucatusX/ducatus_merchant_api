@@ -1,5 +1,5 @@
 compose_file := docker-compose.yml
-compose := docker-compose -f $(compose_file)
+compose := docker compose -f $(compose_file)
 tail := 1000
 service := web     # defaul service is web
 
