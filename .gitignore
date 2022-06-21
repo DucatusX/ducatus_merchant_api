@@ -7,5 +7,9 @@
 /*/__pycache__/
 /*/*/__pycache__/
 /merchant_api/settings_local.py
+/merchant_api/static
 gunicorn.conf.py
 db.sqlite3
+.env
+scanner/blocks
+config.yaml

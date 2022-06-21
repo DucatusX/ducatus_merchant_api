@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
-from merchant_api.settings import FEEDBACK_EMAIL, DEFAULT_FROM_EMAIL
+from merchant_api.settings import config
 
 
 class FeedbackForm(APIView):
@@ -42,7 +42,7 @@ class FeedbackForm(APIView):
         send_mail(
             'Request from rocknblock.io contact form',
             text,
-            DEFAULT_FROM_EMAIL,
-            [FEEDBACK_EMAIL]
+            config.mail_settings.default_from_email,
+            [config.mail_settings.feedback_email]
         )
         return Response({'result': 'ok'})
