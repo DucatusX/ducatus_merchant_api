@@ -1,0 +1,22 @@
+allowed_hosts: ['127.0.0.1', 'mydomain.io']
+secret_key: ''
+debug: True
+rates_api_url: 'https://rates.ducatuscoins.com/api/v1/rates/?fsym={fsym}&tsyms={tsyms}'
+networks:
+  DUCATUS_MAINNET:
+    host: '123.456.78.910'
+    port: 1111
+    user: 'someuser'
+    password: 'somepwd'
+    queue: 'payment-ducatus'
+    wallet_password: 'walletpwd'
+    polling_interval: 10
+    commitment_chain_length: 5
+mail_settings:
+  feedback_email: 'email@domain.io'
+  default_from_email: 'YourMail <from@domain.io>'
+  email_host: 'smtp.host.io'
+  email_host_user: 'from@domain.io'
+  email_host_password: 'somepwd'
+  email_port: 587
+  email_use_tls: True
