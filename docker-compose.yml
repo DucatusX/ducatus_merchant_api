@@ -43,6 +43,8 @@ services:
     volumes:
       - ./:/code/
       - ./static/:/code/static/
+    ports:
+      - "${DOCKER_EXPOSE_PORT}:${DJANGO_PORT}"
     command: /runserver.sh
   receiver:
     <<: *python-service
