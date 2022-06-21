@@ -4,10 +4,10 @@ tail := 1000
 service := web     # defaul service is web
 
 up:
-	sudo $(compose) up --build -d
-
-up_from_image:
 	sudo $(compose) up -d
+
+up_build:
+	sudo $(compose) up --build -d
 
 up_web:
 	sudo $(compose) up -d web
